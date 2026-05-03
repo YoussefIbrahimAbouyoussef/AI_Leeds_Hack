@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NHS Doctor Appointments Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <header class="nhs-topbar">
+        <div class="topbar-inner">
+            <div class="nhs-logo" aria-label="NHS">NHS</div>
+            <div class="top-actions">
+                <div class="search-box">
+                    <input type="search" placeholder="Search" aria-label="Search NHS dashboard" />
+                    <button aria-label="Search">⌕</button>
+                </div>
+                <a href="#" class="account-link">My account</a>
+            </div>
+        </div>
+        <nav class="nhs-nav" aria-label="Main navigation">
+            <a href="#">Health A to Z</a>
+            <a href="#">NHS services</a>
+            <a href="#">Healthy living</a>
+            <a href="#">Mental health</a>
+            <a href="#">Care and support</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <h1>Doctor appointments and AI patient triage</h1>
+            <p>View patient sessions and AI-assessed urgency levels. Conversation logs are stored securely and accessible per session.</p>
+        </div>
+    </section>
+
+    <main class="page-wrap">
+        <section class="page-meta">
+            <div>
+                <h2>Appointments dashboard</h2>
+                <p id="headerDate">Loading today's schedule...</p>
+            </div>
+            <div class="live-clock" id="liveClock">--:--:--</div>
+        </section>
+
+        <section class="stats-row" id="statsRow"></section>
+
+        <section class="toolbar">
+            <input type="search" id="searchInput" placeholder="Search patient, session, or priority" />
+            <select id="priorityFilter">
+                <option value="all">All priorities</option>
+                <option value="urgent">Urgent only</option>
+                <option value="medium">Medium only</option>
+                <option value="normal">Normal only</option>
+            </select>
+        </section>
+
+        <section class="appt-list" id="appointmentList">
+            <div class="empty-state">No completed assessments yet.</div>
+        </section>
+    </main>
+
+    <div id="transcriptModal" class="modal-backdrop" style="display:none">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Patient transcript</h2>
+                <button id="modalClose">×</button>
+            </div>
+            <div id="modalReasoning" class="modal-reasoning"></div>
+            <div id="modalTranscript" class="modal-transcript"></div>
+            <div class="modal-footer">
+                <label for="overrideSelect">Override priority:</label>
+                <select id="overrideSelect">
+                    <option value="urgent">Urgent</option>
+                    <option value="medium">Medium</option>
+                    <option value="normal">Normal</option>
+                </select>
+                <button id="overrideBtn" class="override-btn">Save override</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        const doctor = { name: "Dr. Sarah Mitchell", department: "Mental Health and Therapy" };
+        const priorityOrder = { urgent: 1, medium: 2, normal: 3 };
+        let activeSessionId = null;
+
+        function getSessions() {
+            return JSON.parse(localStorage.getItem("sessions") || "[]")
+                .filter(s => s.status === "complete");
+        }
+
+        function saveSessions(all) {
+            localStorage.setItem("sessions", JSON.stringify(all));
+        }
+
+        function getInitials(name) {
+            return name.split(" ").map(p => p[0]).join("").toUpperCase();
+        }
+
+        function formatAppointmentTime(dt) {
+            return new Intl.DateTimeFormat("en-GB", {
+                weekday: "short", day: "numeric", month: "long", year: "numeric",
+                hour: "2-digit", minute: "2-digit"
+            }).format(new Date(dt));
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById("liveClock").textContent =
+                new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(now);
+            document.getElementById("headerDate").textContent =
+                `${new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(now)} · ${doctor.name} · ${doctor.department}`;
+        }
+
+        function statCard(priority, label, value, desc) {
+            return `
+                <article class="stat-card ${priority}">
+                    <h3>${label}</h3>
+                    <div class="stat-value">${value}</div>
+                    <p>${desc}</p>
+                </article>`;
+        }
+
+        function escapeHtml(s) {
+            const d = document.createElement("div");
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        function getFiltered() {
+            const search = document.getElementById("searchInput").value.toLowerCase().trim();
+            const sel = document.getElementById("priorityFilter").value;
+            return getSessions()
+                .filter(s => {
+                    const txt = `${s.name} ${s.sessionTitle || ""} ${s.priority}`.toLowerCase();
+                    return txt.includes(search) && (sel === "all" || s.priority === sel);
+                })
+                .sort((a, b) => {
+                    const d = priorityOrder[a.priority] - priorityOrder[b.priority];
+                    if (d !== 0) return d;
+                    return new Date(a.appointmentTime) - new Date(b.appointmentTime);
+                });
+        }
+
+        function renderStats(filtered) {
+            const stats = {
+                urgent: filtered.filter(i => i.priority === "urgent").length,
+                medium: filtered.filter(i => i.priority === "medium").length,
+                normal: filtered.filter(i => i.priority === "normal").length
+            };
+            document.getElementById("statsRow").innerHTML =
+                statCard("urgent", "Urgent", stats.urgent, "Needs immediate clinical review") +
+                statCard("medium", "Medium", stats.medium, "Needs review soon") +
+                statCard("normal", "Normal", stats.normal, "Routine appointments");
+        }
+
+        function render() {
+            const filtered = getFiltered();
+            const list = document.getElementById("appointmentList");
+            renderStats(filtered);
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state">No completed assessments yet. Patient sessions will appear here as they are completed.</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map((s, i) => `
+                <article class="appt-card ${s.priority}" style="animation-delay: ${i * 0.04}s">
+                    <div class="appt-header">
+                        <div class="appt-patient">
+                            <div class="appt-avatar">${getInitials(s.name)}</div>
+                            <div class="appt-patient-info">
+                                <h3>${escapeHtml(s.name)}, ${s.age} (${s.gender})</h3>
+                                <div class="appt-time">${formatAppointmentTime(s.appointmentTime)}</div>
+                            </div>
+                        </div>
+                        <span class="priority-badge ${s.priority}">${s.priority}</span>
+                    </div>
+                    <div class="appt-details">
+                        <div class="session-title">${escapeHtml(s.sessionTitle || "Patient triage session")}</div>
+                        <div class="appt-reason"><strong>AI summary:</strong> ${escapeHtml(s.reasoning || "Awaiting summary.")}</div>
+                        <button class="view-btn" data-session="${s.id}">View full transcript</button>
+                    </div>
+                </article>
+            `).join("");
+
+            document.querySelectorAll(".view-btn").forEach(btn => {
+                btn.addEventListener("click", () => openTranscript(btn.dataset.session));
+            });
+        }
+
+        async function importKey(b64) {
+            const raw = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+            return await crypto.subtle.importKey(
+                "raw", raw, { name: "AES-GCM" }, true, ["decrypt"]
+            );
+        }
+
+        async function decryptText(payload, key) {
+            const ct = Uint8Array.from(atob(payload.ciphertext), c => c.charCodeAt(0));
+            const iv = Uint8Array.from(atob(payload.iv), c => c.charCodeAt(0));
+            const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
+            return new TextDecoder().decode(plain);
+        }
+
+        async function openTranscript(sid) {
+            activeSessionId = sid;
+            const s = getSessions().find(x => x.id === sid);
+            if (!s) return;
+
+            document.getElementById("modalTitle").textContent =
+                `${s.name}, ${s.age} (${s.gender}) — ${s.priority.toUpperCase()}`;
+            document.getElementById("modalReasoning").innerHTML =
+                `<strong>AI reasoning:</strong> ${escapeHtml(s.reasoning || "—")}`;
+            document.getElementById("modalTranscript").innerHTML = "<em>Decrypting transcript...</em>";
+            document.getElementById("overrideSelect").value = s.priority;
+            document.getElementById("transcriptModal").style.display = "flex";
+
+            try {
+                const key = await importKey(s.encryptionKey);
+                const messages = [];
+                for (const m of s.messages) {
+                    const text = await decryptText(m, key);
+                    messages.push({ role: m.role, text });
+                }
+                document.getElementById("modalTranscript").innerHTML =
+                    messages.map(m => `
+                        <div class="msg ${m.role}">
+                            <div class="msg-role">${m.role === "ai" ? "AI" : "Patient"}</div>
+                            <div class="msg-text">${escapeHtml(m.text)}</div>
+                        </div>
+                    `).join("");
+            } catch (err) {
+                document.getElementById("modalTranscript").innerHTML = "<em>Could not decrypt transcript.</em>";
+                console.error(err);
+            }
+        }
+
+        document.getElementById("modalClose").addEventListener("click", () => {
+            document.getElementById("transcriptModal").style.display = "none";
+            activeSessionId = null;
+        });
+
+        document.getElementById("overrideBtn").addEventListener("click", () => {
+            if (!activeSessionId) return;
+            const newPriority = document.getElementById("overrideSelect").value;
+            const all = JSON.parse(localStorage.getItem("sessions") || "[]");
+            const idx = all.findIndex(s => s.id === activeSessionId);
+            if (idx >= 0) {
+                all[idx].priority = newPriority;
+                all[idx].overriddenByDoctor = true;
+                saveSessions(all);
+            }
+            document.getElementById("transcriptModal").style.display = "none";
+            activeSessionId = null;
+            render();
+        });
+
+        document.getElementById("searchInput").addEventListener("input", render);
+        document.getElementById("priorityFilter").addEventListener("change", render);
+
+        // Re-render when localStorage changes in other tabs (live updates from patient!)
+        window.addEventListener("storage", (e) => {
+            if (e.key === "sessions") render();
+        });
+
+        // Also poll every 2 seconds in case storage event doesn't fire (same-tab updates)
+        setInterval(render, 2000);
+
+        updateClock();
+        setInterval(updateClock, 1000);
+        render();
+    })();
+    </script>
+</body>
+</html>
