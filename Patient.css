@@ -1,0 +1,110 @@
+    body{
+        background-color: #FAF3DE;
+    }
+    .container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10pt;
+        height: 100vh;
+    }
+
+    article{
+        margin-top: 70pt;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20pt;
+    }
+
+
+    header{
+        background-color: #dfd7bd;
+        font-size: 20pt;
+        color: #475814;
+        border-radius: 20pt;
+        height: 70pt;
+        display: flex;             
+        justify-content: center;   
+        align-items: center;      
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  
+    }
+  button {
+    margin-top: 80pt;
+    
+    background: linear-gradient(135deg, #475814, #6b7f2b);
+    color:#ffffff;
+    border-radius: 30pt;
+
+    width: 260pt;
+    height: 70pt;    
+    font-size: 18pt;   
+
+    border: none;
+    cursor: pointer;
+
+    box-shadow: 0 6pt 12pt rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #2f3a0f, #55681f);
+    box-shadow: 0pt 8pt 18pt rgba(0, 0, 0, 0.2);
+}
+
+    .privacy{
+        margin-top: 70pt;
+        background-color: #dad9d5;
+        border-radius: 20pt;
+        padding: 5pt;
+        color:#475814;
+        
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .comfort{
+        margin-top: 30pt;
+    
+    }
+    .welcome{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2pt;
+
+    }
+    .message{
+        font-size: 60pt;
+        margin: 0pt;
+    }
+    
+    .highlight{
+        color: #475814;
+        font-weight: bold;
+         font-size: 60pt;
+    }
+
+    img{
+        margin-top: 10pt;
+        height: 210pt;
+        width: 300pt;
+    }
+
+    p{
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif  , sans-serif;
+    }
+
+    .comfort{
+        color: #475814;
+    }
+
+    footer{
+        margin-top: 30pt;
+        background-color: #dfd7bd;
+       
+        padding: 5pt;
+        color:#475814;
+        
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }

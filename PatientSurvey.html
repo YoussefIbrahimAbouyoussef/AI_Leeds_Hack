@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HealthTree — Assessment</title>
+    <link rel="stylesheet" href="survey.css" />
+    <style>
+      /* BrowserPod terminal — MUST stay in DOM, hidden via CSS not removal */
+      #console {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 340px;
+        height: 180px;
+        opacity: 0;
+        pointer-events: none;
+        z-index: -1;
+      }
+      #portal {
+        display: none;
+      }
+      #url {
+        display: none;
+      } /* visible in DevTools for debugging */
+
+      #bp-badge {
+        position: fixed;
+        bottom: 18px;
+        right: 18px;
+        background: #475814;
+        color: #fff;
+        font-size: 9pt;
+        font-family: "Lucida Sans", sans-serif;
+        padding: 5px 14px;
+        border-radius: 20px;
+        opacity: 0.9;
+        transition: opacity 1.2s;
+        z-index: 99;
+        pointer-events: none;
+      }
+      #bp-badge.hide {
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="Tree.png" alt="HealthTree" />
+    </header>
+
+    <article class="container">
+      <div class="chatbox">
+        <h1 id="welcome"></h1>
+        <div id="counter">Question 1 of 7</div>
+        <div id="chatLog" class="chat-log"></div>
+        <form>
+          <div class="textbox">
+            <input
+              type="text"
+              name="input"
+              class="input"
+              placeholder="Type your message..."
+              autocomplete="off"
+              required
+            />
+            <button type="submit" class="submit">+</button>
+          </div>
+        </form>
+      </div>
+    </article>
+
+    <!-- BrowserPod: terminal container must stay in DOM -->
+    <div id="console"></div>
+    <!-- BrowserPod: portal iframe (hidden) -->
+    <iframe id="portal"></iframe>
+    <!-- Portal URL shown in DevTools -->
+    <div id="url"></div>
+    <!-- Briefly visible status badge -->
+    <div id="bp-badge">🌿 Securing session…</div>
+
+    <footer>
+      <h3>HealthTree</h3>
+      <p>AI-powered health assessments designed to support better wellbeing.</p>
+      <p>
+        HealthTree does not provide medical diagnosis. Always consult a
+        qualified healthcare professional.
+      </p>
+      <p>&copy; 2026 HealthTree. All rights reserved.</p>
+    </footer>
+
+    <!--
+        type="module" enables ES module imports.
+        survey.js imports pod.js which uses top-level await to boot BrowserPod,
+        so the pod is fully ready before survey.js runs a single line.
+    -->
+    <script type="module" src="survey.js"></script>
+    <script>
+      setTimeout(
+        () => document.getElementById("bp-badge").classList.add("hide"),
+        4500,
+      );
+    </script>
+  </body>
+</html>

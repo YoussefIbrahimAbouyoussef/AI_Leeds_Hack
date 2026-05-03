@@ -1,0 +1,146 @@
+header {
+    background-color: #dfd7bd;
+    font-size: 20pt;
+    color: #475814;
+    border-radius: 20pt;
+    height: 70pt;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background-color: #FAF3DE;
+}
+
+.chatbox {
+    background-color: #dfd7bd;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20pt;
+    box-shadow: 0 6pt 12pt rgba(0, 0, 0, 0.1);
+    padding: 25pt 30pt;
+    width: 600pt;
+    max-width: 92vw;
+}
+
+#welcome {
+    color: #475814;
+    margin: 0 0 6pt;
+    font-size: 22pt;
+}
+
+#counter {
+    color: #6b7f2b;
+    font-size: 11pt;
+    margin-bottom: 14pt;
+    font-weight: bold;
+}
+
+.chat-log {
+    background-color: #faf3de;
+    border-radius: 14pt;
+    padding: 16pt;
+    height: 360pt;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10pt;
+    margin-bottom: 14pt;
+    text-align: left;
+}
+
+.bubble {
+    max-width: 78%;
+    padding: 10pt 14pt;
+    border-radius: 16pt;
+    font-size: 12pt;
+    line-height: 1.4;
+    word-wrap: break-word;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', sans-serif;
+}
+
+.bubble.ai {
+    background-color: #ffffff;
+    color: #475814;
+    align-self: flex-start;
+    border-bottom-left-radius: 4pt;
+    box-shadow: 0 2pt 4pt rgba(0, 0, 0, 0.05);
+}
+
+.bubble.user {
+    background: linear-gradient(135deg, #475814, #6b7f2b);
+    color: #ffffff;
+    align-self: flex-end;
+    border-bottom-right-radius: 4pt;
+}
+
+.bubble.typing {
+    font-style: italic;
+    opacity: 0.7;
+    letter-spacing: 4pt;
+}
+
+img {
+    margin-top: 10pt;
+    height: 210pt;
+    width: 300pt;
+}
+
+footer {
+    margin-top: 30pt;
+    background-color: #dfd7bd;
+    padding: 5pt;
+    color: #475814;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.textbox {
+    display: flex;
+    align-items: center;
+    gap: 10pt;
+    background-color: #d2cbb4;
+    padding: 8pt 12pt;
+    border-radius: 30pt;
+    box-shadow: 0pt 4pt 8pt rgba(0, 0, 0, 0.1);
+}
+
+.input {
+    border: none;
+    outline: none;
+    background: transparent;
+    flex: 1;
+    height: 30pt;
+    font-size: 12pt;
+    color: #475814;
+}
+
+.input:disabled {
+    opacity: 0.6;
+}
+
+.submit {
+    width: 35pt;
+    height: 32pt;
+    border-radius: 50%;
+    border: none;
+    background-color: #475814;
+    color: white;
+    font-size: 14pt;
+    cursor: pointer;
+}
+
+.submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+article {
+    margin-top: 70pt;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20pt;
+    min-height: 100vh;
+}

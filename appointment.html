@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>HealthTree — Appointment Confirmed</title>
+    <link rel="stylesheet" href="appointment.css">
+</head>
+<body>
+    <header>
+        <img src="Tree.png">
+    </header>
+    <article class="container">
+        <div class="card">
+            <h1>Thank you</h1>
+            <p class="lead" id="leadText">Your assessment is complete. An appointment has been arranged for you.</p>
+
+            <div class="appt-box">
+                <div class="appt-label">Your appointment</div>
+                <div class="appt-time" id="apptTime">—</div>
+                <div class="appt-meta" id="apptMeta">—</div>
+            </div>
+
+            <!-- Crisis resources — only shown for red-priority patients -->
+            <div class="crisis-box" id="crisisBox" style="display:none">
+                <h2>If you need support before your appointment</h2>
+                <p>Please don't wait alone. These free, confidential services are available right now:</p>
+                <ul>
+                    <li><strong>Samaritans</strong> &mdash; call <a href="tel:116123">116 123</a> (free, 24/7)</li>
+                    <li><strong>Shout</strong> &mdash; text <strong>SHOUT</strong> to <a href="sms:85258">85258</a> (free, 24/7)</li>
+                    <li><strong>NHS 111</strong> &mdash; call <a href="tel:111">111</a> for urgent mental health help</li>
+                    <li><strong>Emergency</strong> &mdash; if you are in immediate danger, call <a href="tel:999">999</a></li>
+                </ul>
+            </div>
+
+            <p class="comfort">
+                Your responses have been securely shared with your clinical team.
+                You'll receive a reminder before your appointment.
+            </p>
+
+            <a href="PatientHome.html" class="home-link">Return to home</a>
+        </div>
+    </article>
+    <footer class="footer">
+        <div class="footer-content">
+            <h3>HealthTree</h3>
+            <p>AI-powered health assessments designed to support better wellbeing.</p>
+            <p class="disclaimer">
+                HealthTree does not provide medical diagnosis. Always consult a qualified healthcare professional.
+            </p>
+            <p class="copyright">
+                &copy; 2026 HealthTree. All rights reserved.
+            </p>
+        </div>
+    </footer>
+    <script src="appointment.js"></script>
+</body>
+</html>

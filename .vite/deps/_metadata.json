@@ -1,0 +1,15 @@
+{
+  "hash": "135a98f3",
+  "configHash": "80fcaee1",
+  "lockfileHash": "fc8943cc",
+  "browserHash": "d7bcec1a",
+  "optimized": {
+    "@leaningtech/browserpod": {
+      "src": "../../node_modules/@leaningtech/browserpod/index.js",
+      "file": "@leaningtech_browserpod.js",
+      "fileHash": "1064a71b",
+      "needsInterop": false
+    }
+  },
+  "chunks": {}
+}
